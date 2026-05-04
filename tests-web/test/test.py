@@ -25,6 +25,8 @@ class TestSauceDemo(unittest.TestCase):
         service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=service, options=chrome_options)
 
+        self.driver.implicitly_wait(5)
+
         self.url = os.getenv("SAUCE_URL")
         self.username = os.getenv("SAUCE_USERNAME")
         self.password = os.getenv("SAUCE_PASSWORD")
@@ -43,26 +45,34 @@ class TestSauceDemo(unittest.TestCase):
 
         login_page = LoginPage(self.driver)
         login_page.fazer_login(self.username, self.password)
+        self.assertIn("inventory", self.driver.current_url)
 
         produtos_page = ProdutosPage(self.driver)
         produtos_page.adicionar_primeiro_produto()
-        self.assertEqual(produtos_page.obter_quantidade_carrinho(), "1")
 
         self.assertEqual(produtos_page.obter_quantidade_carrinho(), "1")
 
         produtos_page.ir_para_carrinho()
+        self.assertIn("cart", self.driver.current_url)
 
         carrinho_page = CarrinhoPage(self.driver)
         self.assertEqual(carrinho_page.obter_quantidade_itens(), 1)
+
         carrinho_page.ir_para_checkout()
+        self.assertIn("checkout-step-one", self.driver.current_url)
 
         checkout_page = CheckoutPage(self.driver)
         checkout_page.preencher_dados("QA", "Tester", "12345")
+
         checkout_page.clicar_continuar()
+        self.assertIn("checkout-step-two", self.driver.current_url)
+
         checkout_page.clicar_finalizar()
+        self.assertIn("checkout-complete", self.driver.current_url)
 
         mensagem = checkout_page.obter_mensagem_sucesso()
         self.assertEqual(mensagem, "Thank you for your order!")
+
         print("Compra finalizada com sucesso!")
 
     def tearDown(self):
