@@ -97,8 +97,7 @@ O projeto separa a lógica de interação com a interface (pages) da lógica de 
  
 ```bash
 npm install -g newman
-cd tests-api
-newman run Teste-Automacao-Petstore.json
+newman run tests-api/teste-automacao-petstore.json
 ```
  
 ### Testes Web
@@ -106,7 +105,7 @@ newman run Teste-Automacao-Petstore.json
 ```bash
 cd tests-web
 pip install -r requirements.txt
-PYTHONPATH=. python -m test.test
+python -m test.test
 ```
  
 ### Variáveis de ambiente (testes web)
